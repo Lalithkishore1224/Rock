@@ -8,9 +8,7 @@
     
     <title>ROCK PAPER SCISSOR</title>
     <style>
-        *{
-            font-family: 'Poppins';
-        }
+        * { font-family: 'Poppins'; }
         body {
             background-color:#0D0B1A;
             margin: 0;
@@ -42,6 +40,7 @@
         .hands {
             width: 40%;
             max-width: 300px;
+            text-align: center;
         }
 
         #img1, #img2 {
@@ -90,6 +89,24 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
 
+        .scoreboard {
+            margin-top: 20px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            background: white;
+            padding: 10px 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .score {
+            color: darkblue;
+        }
+
         @keyframes shakeLeft {
             0%{ transform: rotateY(180deg) translateY(0px); }
             50%{ transform: rotateY(180deg) translateY(-50px); }
@@ -104,16 +121,8 @@
 
         @media (max-width: 768px) {
             h1 { font-size: 1.5rem; }
-            
-            .game-container {
-                flex-direction: column;
-                gap: 20px;
-            }
-
-            button {
-                font-size: 1rem;
-                padding: 12px 20px;
-            }
+            .game-container { flex-direction: column; gap: 20px; }
+            button { font-size: 1rem; padding: 12px 20px; }
         }
     </style>
 </head>
@@ -121,10 +130,18 @@
     <h1>ROCK &nbsp PAPER &nbsp SCISSOR</h1>
     <div class="notification" id="notification"></div>
 
+    <!-- Scoreboard -->
+    <div class="scoreboard" style="background-color: #0D0B1A;">
+        <span style="color: red;">You: <span id="playerScore" class="score">0</span></span>
+        <span style="color: red;">Draws: <span id="drawScore" class="score">0</span></span>
+        <span style="color: red;">Computer: <span id="computerScore" class="score">0</span></span>
+    </div>
+
     <div class="game-container">
         <div class="hands">
             <div id="hand1">
-                <b style="color:red;">You</b><img src="rock.png" id="img1">
+                <b style="color:red;">You</b>
+                <img src="rock.png" id="img1">
             </div>
         </div>
         <div class="hands">
@@ -141,69 +158,71 @@
         <button type="button" onclick="game(2)" id="scissors">SCISSOR</button>
     </div>
 
-    <script>const notification = document.getElementById('notification');
-        const choices = ['rock', 'paper', 'scissors'];
+    <script>
+        const notification = document.getElementById('notification');
+        const playerScoreElement = document.getElementById('playerScore');
+        const computerScoreElement = document.getElementById('computerScore');
+        const drawScoreElement = document.getElementById('drawScore');
+
+        let playerScore = 0;
+        let computerScore = 0;
+        let drawScore = 0;
         let gameActive = false;
-        
+
         function start() {
             gameActive = true;
             document.getElementById("start").style.visibility = "hidden";
-            document.getElementById("rock").style.visibility = "visible";
-            document.getElementById("paper").style.visibility = "visible";
-            document.getElementById("scissors").style.visibility = "visible";
         }
-        
-        const clickedHand = [
-            "<img src='rock.png' id='img1'>",
-            "<img src='paper.png' id='img1'>",
-            "<img src='scissors.png' id='img1'>"
-        ];
-        
-        const clickedRightHand = [
-            "<img src='rock.png' id='img2'>",
-            "<img src='paper.png' id='img2'>",
-            "<img src='scissors.png' id='img2'>"
-        ];
-        
+
+        const hands = ['rock.png', 'paper.png', 'scissors.png'];
+
         function showNotification(message, isWin) {
             notification.textContent = message;
             notification.style.display = 'block';
             notification.style.backgroundColor = isWin ? '#4CAF50' : '#f44336';
             notification.style.color = 'white';
-        
+
             setTimeout(() => {
                 notification.style.display = 'none';
-                window.location.reload();
             }, 2000);
         }
-        
-        function game(position) {
+
+        function updateScoreboard() {
+            playerScoreElement.textContent = playerScore;
+            computerScoreElement.textContent = computerScore;
+            drawScoreElement.textContent = drawScore;
+        }
+
+        function game(playerChoice) {
             if (!gameActive) return;
-        
+
             document.getElementById("img1").style.animation = 'shakeLeft 0.5s 3 ease-in-out';
             document.getElementById("img2").style.animation = 'shakeRight 0.5s 3 ease-in-out';
-        
-            let random = Math.floor(Math.random() * 3);
-            
+
+            let computerChoice = Math.floor(Math.random() * 3);
+
             setTimeout(() => {
-                document.getElementById("hand2").innerHTML = clickedRightHand[random];
-                document.getElementById("hand1").innerHTML = clickedHand[position];
-        
-                // Display result immediately after hands update
-                if (random === position) {
+                document.getElementById("img1").src = hands[playerChoice]; // Update player's choice
+                document.getElementById("img2").src = hands[computerChoice]; // Update computer's choice
+
+                if (playerChoice === computerChoice) {
+                    drawScore++;
                     showNotification("MATCH DRAW !!", false);
                 } else if (
-                    (position === 0 && random === 2) ||
-                    (position === 1 && random === 0) ||
-                    (position === 2 && random === 1)
+                    (playerChoice === 0 && computerChoice === 2) ||
+                    (playerChoice === 1 && computerChoice === 0) ||
+                    (playerChoice === 2 && computerChoice === 1)
                 ) {
+                    playerScore++;
                     showNotification("YOU WIN! 🎉", true);
                 } else {
+                    computerScore++;
                     showNotification("COMPUTER WINS! 😢", false);
                 }
-            }, 600); s
+
+                updateScoreboard();
+            }, 600);
         }
-        
     </script>
 </body>
 </html>
