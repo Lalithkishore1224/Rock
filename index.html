@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <title>ROCK PAPER SCISSOR</title>
+    <style>
+        *{
+            font-family: 'Poppins';
+        }
+        body {
+            background-color: #ffda00;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2rem;
+            color: red;
+            margin: 20px 0;
+        }
+
+        .game-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin: 20px auto;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        .hands {
+            width: 40%;
+            max-width: 300px;
+        }
+
+        #img1, #img2 {
+            width: 100%;
+            height: auto;
+        }
+
+        #img1 {
+            transform: rotateY(180deg);
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 15px 25px;
+            font-size: 1.1rem;
+            background-color: orangered;
+            color: white;
+            border: 3px solid white;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s;
+            flex: 1 1 120px;
+        }
+
+        #start {
+            background-color: darkgreen;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            padding: 15px 30px;
+            border-radius: 30px;
+            font-weight: bold;
+            display: none;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        @keyframes shakeLeft {
+            0%{ transform: rotateY(180deg) translateY(0px); }
+            50%{ transform: rotateY(180deg) translateY(-50px); }
+            100%{ transform: rotateY(180deg) translateY(0px); }
+        }
+
+        @keyframes shakeRight {
+            0%{ transform: translateY(0px); }
+            50%{ transform: translateY(-50px); }
+            100%{ transform: translateY(0px); }
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 1.5rem; }
+            
+            .game-container {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            button {
+                font-size: 1rem;
+                padding: 12px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>ROCK &nbsp PAPER &nbsp SCISSOR</h1>
+    <div class="notification" id="notification"></div>
+
+    <div class="game-container">
+        <div class="hands">
+            <div id="hand1">
+                <b>You</b><img src="rock.png" id="img1">
+            </div>
+        </div>
+        <div class="hands">
+            <div id="hand2">
+                <img src="rock.png" id="img2">
+            </div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button type="button" onclick="start()" id="start">START</button>
+        <button type="button" onclick="game(0)" id="rock">ROCK</button>
+        <button type="button" onclick="game(1)" id="paper">PAPER</button>
+        <button type="button" onclick="game(2)" id="scissors">SCISSOR</button>
+    </div>
+
+    <script>const notification = document.getElementById('notification');
+        const choices = ['rock', 'paper', 'scissors'];
+        let gameActive = false;
+        
+        function start() {
+            gameActive = true;
+            document.getElementById("start").style.visibility = "hidden";
+            document.getElementById("rock").style.visibility = "visible";
+            document.getElementById("paper").style.visibility = "visible";
+            document.getElementById("scissors").style.visibility = "visible";
+        }
+        
+        const clickedHand = [
+            "<img src='rock.png' id='img1'>",
+            "<img src='paper.png' id='img1'>",
+            "<img src='scissors.png' id='img1'>"
+        ];
+        
+        const clickedRightHand = [
+            "<img src='rock.png' id='img2'>",
+            "<img src='paper.png' id='img2'>",
+            "<img src='scissors.png' id='img2'>"
+        ];
+        
+        function showNotification(message, isWin) {
+            notification.textContent = message;
+            notification.style.display = 'block';
+            notification.style.backgroundColor = isWin ? '#4CAF50' : '#f44336';
+            notification.style.color = 'white';
+        
+            setTimeout(() => {
+                notification.style.display = 'none';
+                window.location.reload();
+            }, 2000);
+        }
+        
+        function game(position) {
+            if (!gameActive) return;
+        
+            document.getElementById("img1").style.animation = 'shakeLeft 0.5s 3 ease-in-out';
+            document.getElementById("img2").style.animation = 'shakeRight 0.5s 3 ease-in-out';
+        
+            let random = Math.floor(Math.random() * 3);
+            
+            setTimeout(() => {
+                document.getElementById("hand2").innerHTML = clickedRightHand[random];
+                document.getElementById("hand1").innerHTML = clickedHand[position];
+        
+                // Display result immediately after hands update
+                if (random === position) {
+                    showNotification("MATCH DRAW !!", false);
+                } else if (
+                    (position === 0 && random === 2) ||
+                    (position === 1 && random === 0) ||
+                    (position === 2 && random === 1)
+                ) {
+                    showNotification("YOU WIN! 🎉", true);
+                } else {
+                    showNotification("COMPUTER WINS! 😢", false);
+                }
+            }, 600); s
+        }
+        
+    </script>
+</body>
+</html>
